@@ -972,6 +972,10 @@ if IS_ANDROID:
       'func': androidlog.toast,
       'args': [Str()],
       'return': None},
+    'notify': {
+      'func': androidlog.notify,
+      'args': [Str()],
+      'return': None},
     'prompt': {
       'func': androidlog.prompt,
       'args': [Str()],
