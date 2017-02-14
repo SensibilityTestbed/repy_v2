@@ -979,7 +979,11 @@ if IS_ANDROID:
     'prompt': {
       'func': androidlog.prompt,
       'args': [Str()],
-      'return': Bool()}
+      'return': Bool()},
+    'vibrate': {
+      'func': androidlog.vibrate,
+      'args': [Float()],
+      'return': None},
   }
 
   # Add sensor calls to the user namespace
