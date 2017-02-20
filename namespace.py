@@ -125,6 +125,7 @@ import virtual_namespace
 try:
   import android
   IS_ANDROID = True
+  import repysensors
   import androidlog
   import miscinfo
   import sensor
@@ -860,7 +861,7 @@ if IS_ANDROID:
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_acceleration': {
-	    'func': sensor.get_acceleration,
+	    'func': repysensors.wrap3(sensor.get_acceleration),
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_ambient_temperature': {
