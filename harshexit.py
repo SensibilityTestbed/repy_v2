@@ -15,14 +15,6 @@ import signal
 # needed for changing polling constants on the Nokia N800
 import repy_constants
 
-# On Android, import repysensors for the sensor lock
-try:
-  import android
-  import repysensors
-except ImportError:
-  pass
-
-
 # Needed for kill_process; This will fail on non-windows systems
 try:
   import windows_api
@@ -185,3 +177,15 @@ def init_ostype():
     return
 
   ostype = 'Unknown'
+
+
+# On Android, import repysensors for the sensor lock.
+# We do this down here because otherwise, a circular import chain
+# (that depends on our `init_ostype` to be defined) fails.
+try:
+  import android
+except ImportError:
+  pass
+else:
+  import repysensors
+
