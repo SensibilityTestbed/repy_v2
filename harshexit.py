@@ -15,6 +15,14 @@ import signal
 # needed for changing polling constants on the Nokia N800
 import repy_constants
 
+# On Android, import repysensors for the sensor lock
+try:
+  import android
+  import repysensors
+except ImportError:
+  pass
+
+
 # Needed for kill_process; This will fail on non-windows systems
 try:
   import windows_api
@@ -54,7 +62,6 @@ def portablekill(pid):
   if ostype == 'Linux' or ostype == 'Darwin':
     # On Android, block until any pending sensor call has returned.
     if osrealtype == 'Android':
-      import repysensors
       repysensors.sensorlock.acquire(True)
     try:
       os.kill(pid, signal.SIGTERM)
