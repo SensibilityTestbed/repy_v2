@@ -890,7 +890,7 @@ if IS_ANDROID:
     'get_light': {
 	    'func': repysensors.get_light,
 	    'args': [],
-	    'return': NoneOrListOrDict()},
+	    'return': NoneOrInt()},
     'get_linear_acceleration': {
 	    'func': repysensors.get_linear_acceleration,
 	    'args': [],
