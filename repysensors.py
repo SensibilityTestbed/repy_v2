@@ -8,6 +8,17 @@ import media
 import location
 import androidlog
 
+# Stash internals for dealing with Unicode.
+# (Repy's `safe.py` doesn' allow the Python `unicode` type to be used,
+# and removes Unicode, import, hasattr etc. from the namespace. The
+# various sensors may return Unicode values though.)
+import encodings
+encodings.hasattr = hasattr
+encodings.unicode = unicode
+encodings.__import__ = __import__
+import encodings.ascii
+encodings.ascii.__import__ = __import__
+
 
 # Allow at most this many seconds of vibration
 # (We limit this here because namespace.py's `Float` value processor
@@ -78,8 +89,12 @@ def refine_1d(sensor_function):
   In particular, drop epochtime from the return values, and normalize
   the sensor event time."""
   def refined_sensor_function_1d():
-    _, t, x = sensor_function()
-    return [normalize_sensor_event_time(t), x]
+    returned_tuple = sensor_function()
+    if returned_tuple != None:
+      _, t, x = returned_tuple
+      return [normalize_sensor_event_time(t), x]
+    else:
+      return None
   return refined_sensor_function_1d
 
 
@@ -90,9 +105,123 @@ def refine_3d(sensor_function):
   In particular, drop epochtime from the return values, and normalize
   the sensor event time."""
   def refined_sensor_function_3d():
-    _, t, x, y, z = sensor_function()
-    return [normalize_sensor_event_time(t), x, y, z]
+    returned_tuple = sensor_function()
+    if returned_tuple != None:
+      _, t, x, y, z = returned_tuple
+      return [normalize_sensor_event_time(t), x, y, z]
+    else:
+      return None
   return refined_sensor_function_3d
+
+
+
+def refine_4d(sensor_function):
+  """Refine the values returned by 3-axis sensor implementations that also
+  report a fourth value such as the sensor accuracy, i.e. tuples containing
+  (epochtime, eventtime, x, y, z, w).
+  In particular, drop epochtime from the return values, and normalize
+  the sensor event time."""
+  def refined_sensor_function_4d():
+    returned_tuple = sensor_function()
+    if returned_tuple != None:
+      _, t, x, y, z, w = returned_tuple
+      return [normalize_sensor_event_time(t), x, y, z, w]
+    else:
+      return None
+  return refined_sensor_function_4d
+
+
+
+def refine_5d(sensor_function):
+  """Refine the values returned by 3-axis sensor implementations that also
+  report two further values such as an additional scalar component and
+  the sensor accuracy, i.e. tuples containing
+  (epochtime, eventtime, x, y, z, v, w).
+  In particular, drop epochtime from the return values, and normalize
+  the sensor event time."""
+  def refined_sensor_function_5d():
+    returned_tuple = sensor_function()
+    if returned_tuple != None:
+      _, t, x, y, z, v, w = returned_tuple
+      return [normalize_sensor_event_time(t), x, y, z, v, w]
+    else:
+      return None
+  return refined_sensor_function_5d
+
+
+
+def refine_6d(sensor_function):
+  """Refine the values returned by 3-axis sensor implementations that also
+  report an additional scalar for each axis, i.e. tuples containing
+  (epochtime, eventtime, x, y, z, u, v, w).
+  In particular, drop epochtime from the return values, and normalize
+  the sensor event time."""
+  def refined_sensor_function_6d():
+    returned_tuple = sensor_function()
+    if returned_tuple != None:
+      _, t, x, y, z, u, v, w = returned_tuple
+      return [normalize_sensor_event_time(t), x, y, z, u, v, w]
+    else:
+      return None
+  return refined_sensor_function_6d
+
+
+
+def _scrub_string(source_string):
+  """Generate an ASCII representation of a Unicode string. Automatically
+  replaces non-ASCII characters with '?'."""
+  return source_string.encode("ascii", "replace")
+
+
+
+def _scrub_list(source_list):
+  """Clean list elements of Unicode. I assume we will not see tuples."""
+  clean_list = []
+  # Clean all the source_list's elements. This may require further
+  # string scrubbing, recursion (for dict or list values), or no-ops
+  # (for numeric, boolean, or NoneType values).
+  for value in source_list:
+    clean_list.append(scrub_unicode_from(value))
+
+  return clean_list
+
+
+
+def _scrub_dict(source_dict):
+  """
+  Clean source_dict's keys and values of Unicode. Recurse as required.
+  WARNING:
+    Key scrubbing may result in collisions when only the Unicode
+    portions of the key differ!
+  """
+  clean_dict = {}
+  # Clean all the source_dict's items. This may require further
+  # string scrubbing (for both keys and values), recursion (for dict
+  # values), or no-ops (for numeric, boolean, or NoneType values).
+  for key, value in source_dict.items():
+    clean_key = _scrub_string(key)
+    clean_dict[clean_key] = scrub_unicode_from(value)
+
+  return clean_dict
+
+
+
+def scrub_unicode_from(value):
+  """Remove Unicode strings from the value passed in. A suitable helper
+  function is chosen depending on `value`'s type.
+
+  NOTE: Tuples are not handled yet.
+  """
+  if type(value) is encodings.unicode:
+    # We can't check for `is unicode` because safe.py removed `unicode`
+    # from our namespace. It is stashed in `encodings`'s though.
+    return _scrub_string(value)
+  elif type(value) is list:
+    return _scrub_list(value)
+  elif type(value) is dict:
+    return _scrub_dict(value)
+  else:
+    return value
 
 
 
@@ -104,14 +233,15 @@ outputlock_wrap = wrap_with(outputlock)
 vibratelock_wrap = wrap_with(vibratelock)
 
 
+
 # Wrap the `miscinfo` module calls
+# TODO scrub_unicode_from every call that picks up arbitrary strings
+# TODO from the surroundings!
 get_bluetooth_info = sensorlock_wrap(miscinfo.get_bluetooth_info)
 get_bluetooth_scan_info = sensorlock_wrap(miscinfo.get_bluetooth_scan_info)
 is_wifi_enabled = sensorlock_wrap(miscinfo.is_wifi_enabled)
 get_wifi_state = sensorlock_wrap(miscinfo.get_wifi_state)
-get_wifi_connection_info = sensorlock_wrap(miscinfo.get_wifi_connection_info)
 get_wifi_scan_info = sensorlock_wrap(miscinfo.get_wifi_scan_info)
-get_network_info = sensorlock_wrap(miscinfo.get_network_info)
 get_cellular_provider_info = sensorlock_wrap(miscinfo.get_cellular_provider_info)
 get_cell_info = sensorlock_wrap(miscinfo.get_cell_info)
 get_sim_info = sensorlock_wrap(miscinfo.get_sim_info)
@@ -122,6 +252,29 @@ get_volume_info = sensorlock_wrap(miscinfo.get_volume_info)
 get_battery_info = sensorlock_wrap(miscinfo.get_battery_info)
 
 
+
+def get_wifi_connection_info():
+  sensorlock.acquire()
+  return_value = miscinfo.get_wifi_connection_info()
+  sensorlock.release()
+  if return_value is not None:
+    return scrub_unicode_from(return_value)
+  else:
+    return None
+
+
+
+def get_network_info():
+  sensorlock.acquire()
+  return_value = miscinfo.get_network_info()
+  sensorlock.release()
+  if return_value is not None:
+    return scrub_unicode_from(return_value)
+  else:
+    return None
+
+
+
 # Wrap the `sensor` module calls
 # (Some calls get a second wrapping because their return values need to be
 # "refined", i.e. the epoch timestamp dropped and the sensor event
@@ -129,21 +282,35 @@ get_battery_info = sensorlock_wrap(miscinfo.get_battery_info)
 get_sensor_list = sensorlock_wrap(sensor.get_sensor_list)
 get_acceleration = refine_3d(sensorlock_wrap(sensor.get_acceleration))
 get_ambient_temperature = refine_1d(sensorlock_wrap(sensor.get_ambient_temperature))
-get_game_rotation_vector = refine_3d(sensorlock_wrap(sensor.get_game_rotation_vector))
-get_geomagnetic_rotation_vector = refine_3d(sensorlock_wrap(sensor.get_geomagnetic_rotation_vector))
+get_game_rotation_vector = refine_4d(sensorlock_wrap(sensor.get_game_rotation_vector))
+get_geomagnetic_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_geomagnetic_rotation_vector))
 get_gravity = refine_3d(sensorlock_wrap(sensor.get_gravity))
 get_gyroscope = refine_3d(sensorlock_wrap(sensor.get_gyroscope))
-get_gyroscope_uncalibrated = refine_3d(sensorlock_wrap(sensor.get_gyroscope_uncalibrated))
+get_gyroscope_uncalibrated = refine_6d(sensorlock_wrap(sensor.get_gyroscope_uncalibrated))
 get_heart_rate = refine_1d(sensorlock_wrap(sensor.get_heart_rate))
-get_light = refine_1d(sensorlock_wrap(sensor.get_light))
 get_linear_acceleration = refine_3d(sensorlock_wrap(sensor.get_linear_acceleration))
 get_magnetic_field = refine_3d(sensorlock_wrap(sensor.get_magnetic_field))
-get_magnetic_field_uncalibrated = refine_3d(sensorlock_wrap(sensor.get_magnetic_field_uncalibrated))
-get_pressure = refine_1d(sensorlock_wrap(sensor.get_pressure))
-get_proximity = refine_1d(sensorlock_wrap(sensor.get_proximity))
+get_magnetic_field_uncalibrated = refine_6d(sensorlock_wrap(sensor.get_magnetic_field_uncalibrated))
+get_pressure = refine_3d(sensorlock_wrap(sensor.get_pressure))
+get_proximity = refine_3d(sensorlock_wrap(sensor.get_proximity))
 get_relative_humidity = refine_1d(sensorlock_wrap(sensor.get_relative_humidity))
-get_rotation_vector = refine_3d(sensorlock_wrap(sensor.get_rotation_vector))
+get_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_rotation_vector))
 get_step_counter = refine_1d(sensorlock_wrap(sensor.get_step_counter))
+
+
+
+def get_light():
+  # The docs don't mention this, but my Nexus 6's light sensor has
+  # three axes, the latter two of which 0....
+  sensorlock.acquire()
+  return_value = sensor.get_light()
+  sensorlock.release()
+  if return_value is not None:
+    _, _, illumination, _, _ = return_value
+    return illumination
+  else:
+    return None
+
 
 
 # Wrap the `media` module calls
@@ -160,6 +327,7 @@ get_location = sensorlock_wrap(location.get_location)
 get_lastknown_location = sensorlock_wrap(location.get_lastknown_location)
 get_geolocation = sensorlock_wrap(location.get_geolocation)
 
+
 # Wrap the `androidlog` module calls
 # XXX `prompt` blocks indefinitely when the prompt GUI widget disappears!
 android_log = outputlock_wrap(androidlog.log)
@@ -168,8 +336,7 @@ notify = outputlock_wrap(androidlog.notify)
 prompt = outputlock_wrap(androidlog.prompt)
 
 
-# The `androidlog.vibrate` wrapper also makes sure we don't vibrate
-# (and thus block the vibratelock) forever.
+# Make sure we don't vibrate (and block `vibratelock`) forever.
 def vibrate(seconds):
   if 0 <= seconds <= MAX_VIBRATION_DURATION:
     vibratelock.acquire()
