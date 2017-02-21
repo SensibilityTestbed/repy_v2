@@ -1,5 +1,5 @@
-# For a Repy lock
-import emulmisc
+# For a lock
+import threading
 
 # For Android CPython/JNI sensors
 import sensor
@@ -7,24 +7,29 @@ import sensor
 # Contain any sensor access in a critical section.
 # (We use this to never `harshexit` while a sensor is accessed.)
 # See aaaaalbert/sensibility-testbed#19
-sensorlock = emulmisc.createlock()
+sensorlock = threading.Lock()
 
 
 # Fetch a sensor reading, store the sensor event timestamp (whose origin
-# is the machine's boot timestamp) in milliseconds. The constant generated
-# lets us sync sensor events with the vessel's `getruntime()`.
+# is the machine's boot timestamp) in milliseconds.
 _, sensor_zulu_time, _, _, _ = sensor.get_acceleration()
-sensor_zulu_time -= emulmisc.getruntime() * 1000
+
+# I would love to sync sensor events with the vessel's `getruntime()`
+# more precisely.
+# However, this requires access to `emulmisc.getruntime` which in turn
+# causes a messy circular import problem. Fortunately, the time delta
+# between `getruntime` and our sensors' time is small, a few dozen
+# milliseconds on a lower-end smartphone. Thus, don't adjust.
+#
+#sensor_zulu_time -= emulmisc.getruntime() * 1000
 
 
 
 def normalize_sensor_event_time(t):
   """Convert the sensor event timestamp `t` from milliseconds (see
   com.snakei/SensorService.java/onSensorChanged) to seconds, and
-  rebase it so that the vessel's start time and the
-  sensor event time have the same origin.
-  The sensor event timestamp should then align with the vessel's notion
-  of "now", i.e. `getruntime()`."""
+  rebase it so that the sensor event timestamps start at zero;
+  (almost) at the vessel's start time."""
   return (t - sensor_zulu_time) / 1000.
 
 
