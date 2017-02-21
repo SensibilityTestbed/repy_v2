@@ -126,11 +126,6 @@ try:
   import android
   IS_ANDROID = True
   import repysensors
-  import androidlog
-  import miscinfo
-  import sensor
-  import media
-  import location
 except ImportError:
   IS_ANDROID = False
 
@@ -794,195 +789,195 @@ VIRTUAL_NAMESPACE_OBJECT_WRAPPER_INFO = {
 if IS_ANDROID:
   SNAKEI_MISCINFO_WRAPPER_INFO = {
     'get_bluetooth_info': {
-      'func': miscinfo.get_bluetooth_info,
+      'func': repysensors.get_bluetooth_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_bluetooth_scan_info': {
-      'func': miscinfo.get_bluetooth_scan_info,
+      'func': repysensors.get_bluetooth_scan_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'is_wifi_enabled': {
-      'func': miscinfo.is_wifi_enabled,
+      'func': repysensors.is_wifi_enabled,
       'args': [],
       'return': Bool()},
     'get_wifi_state': {
-      'func': miscinfo.get_wifi_state,
+      'func': repysensors.get_wifi_state,
       'args': [],
       'return': Int()},
     'get_wifi_connection_info': {
-      'func': miscinfo.get_wifi_connection_info,
+      'func': repysensors.get_wifi_connection_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_wifi_scan_info': {
-      'func': miscinfo.get_wifi_scan_info,
+      'func': repysensors.get_wifi_scan_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_network_info': {
-      'func': miscinfo.get_network_info,
+      'func': repysensors.get_network_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_cellular_provider_info': {
-      'func': miscinfo.get_cellular_provider_info,
+      'func': repysensors.get_cellular_provider_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_cell_info': {
-      'func': miscinfo.get_cell_info,
+      'func': repysensors.get_cell_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_sim_info': {
-      'func': miscinfo.get_sim_info,
+      'func': repysensors.get_sim_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_phone_info': {
-      'func': miscinfo.get_phone_info,
+      'func': repysensors.get_phone_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_mode_settings': {
-      'func': miscinfo.get_mode_settings,
+      'func': repysensors.get_mode_settings,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_display_info': {
-      'func': miscinfo.get_display_info,
+      'func': repysensors.get_display_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_volume_info': {
-      'func': miscinfo.get_volume_info,
+      'func': repysensors.get_volume_info,
       'args': [],
       'return': NoneOrListOrDict()},
     'get_battery_info': {
-      'func': miscinfo.get_battery_info,
+      'func': repysensors.get_battery_info,
       'args': [],
       'return': NoneOrListOrDict()},
   }
 
   SNAKEI_SENSOR_WRAPPER_INFO = {
     'get_sensor_list': {
-	    'func': sensor.get_sensor_list,
+	    'func': repysensors.get_sensor_list,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_acceleration': {
-	    'func': repysensors.wrap3(sensor.get_acceleration),
+	    'func': repysensors.get_acceleration,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_ambient_temperature': {
-	    'func': sensor.get_ambient_temperature,
+	    'func': repysensors.get_ambient_temperature,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_game_rotation_vector': {
-	    'func': sensor.get_game_rotation_vector,
+	    'func': repysensors.get_game_rotation_vector,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_geomagnetic_rotation_vector': {
-	    'func': sensor.get_geomagnetic_rotation_vector,
+	    'func': repysensors.get_geomagnetic_rotation_vector,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_gravity': {
-	    'func': sensor.get_gravity,
+	    'func': repysensors.get_gravity,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_gyroscope': {
-	    'func': sensor.get_gyroscope,
+	    'func': repysensors.get_gyroscope,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_gyroscope_uncalibrated': {
-	    'func': sensor.get_gyroscope_uncalibrated,
+	    'func': repysensors.get_gyroscope_uncalibrated,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_heart_rate': {
-	    'func': sensor.get_heart_rate,
+	    'func': repysensors.get_heart_rate,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_light': {
-	    'func': sensor.get_light,
+	    'func': repysensors.get_light,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_linear_acceleration': {
-	    'func': sensor.get_linear_acceleration,
+	    'func': repysensors.get_linear_acceleration,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_magnetic_field': {
-	    'func': sensor.get_magnetic_field,
+	    'func': repysensors.get_magnetic_field,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_magnetic_field_uncalibrated': {
-	    'func': sensor.get_magnetic_field_uncalibrated,
+	    'func': repysensors.get_magnetic_field_uncalibrated,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_pressure': {
-	    'func': sensor.get_pressure,
+	    'func': repysensors.get_pressure,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_proximity': {
-	    'func': sensor.get_proximity,
+	    'func': repysensors.get_proximity,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_relative_humidity': {
-	    'func': sensor.get_relative_humidity,
+	    'func': repysensors.get_relative_humidity,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_rotation_vector': {
-	    'func': sensor.get_rotation_vector,
+	    'func': repysensors.get_rotation_vector,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_step_counter': {
-	    'func': sensor.get_step_counter,
+	    'func': repysensors.get_step_counter,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
   }
 
   SNAKEI_MEDIA_WRAPPER_INFO = {
     'microphone_record': {
-	    'func': media.microphone_record,
+	    'func': repysensors.microphone_record,
 	    'args': [Str(maxlen=120), Int(min=0)],
 	    'return': None},
     'is_media_playing': {
-	    'func': media.is_media_playing,
+	    'func': repysensors.is_media_playing,
 	    'args': [],
 	    'return': Bool()},
     'is_tts_speaking': {
-	    'func': media.is_tts_speaking,
+	    'func': repysensors.is_tts_speaking,
 	    'args': [],
 	    'return': Bool()},
     'tts_speak': {
-	    'func': media.tts_speak,
+	    'func': repysensors.tts_speak,
 	    'args': [Str(maxlen=1024)],
 	    'return': None}
   }
 
   SNAKEI_LOCATION_WRAPPER_INFO = {
     'get_location': {
-	    'func': location.get_location,
+	    'func': repysensors.get_location,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_lastknown_location': {
-	    'func': location.get_lastknown_location,
+	    'func': repysensors.get_lastknown_location,
 	    'args': [],
 	    'return': NoneOrListOrDict()},
     'get_geolocation': {
-	    'func': location.get_geolocation,
+	    'func': repysensors.get_geolocation,
 	    'args': [Float(True), Float(True), Int()],
 	    'return': NoneOrListOrDict()}
   }
 
   SNAKEI_OUTPUTS_WRAPPER_INFO = {
     'androidlog': {
-      'func': androidlog.log,
+      'func': repysensors.android_log,
       'args': [Str()],
       'return': None},
     'toast': {
-      'func': androidlog.toast,
+      'func': repysensors.toast,
       'args': [Str()],
       'return': None},
     'notify': {
-      'func': androidlog.notify,
+      'func': repysensors.notify,
       'args': [Str()],
       'return': None},
     'prompt': {
-      'func': androidlog.prompt,
+      'func': repysensors.prompt,
       'args': [Str()],
       'return': Bool()},
     'vibrate': {
-      'func': androidlog.vibrate,
+      'func': repysensors.vibrate,
       'args': [Float()],
       'return': None},
   }

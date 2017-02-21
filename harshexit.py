@@ -54,7 +54,10 @@ def portablekill(pid):
   if ostype == 'Linux' or ostype == 'Darwin':
     # On Android, block until any pending sensor call has returned.
     if osrealtype == 'Android':
-      repysensors.sensorlock.acquire(True)
+      # Acquire all sensor locks. This may take a few seconds, especially
+      # when text-to-speech is progressing.
+      for lock in repysensors.locklist:
+        lock.acquire(True)
     try:
       os.kill(pid, signal.SIGTERM)
     except:
