@@ -225,6 +225,19 @@ def scrub_unicode_from(value):
 
 
 
+def unicode_scrub_wrap(sensor_function):
+  """Returned a function that calls into `sensor_function` and removes
+  ("scrubs") Unicode from its return values."""
+  def scrubbed_function():
+    return_value = sensor_function()
+    if return_value != None:
+      return scrub_unicode_from(return_value)
+    else:
+      return None
+  return scrubbed_function
+
+
+
 # Create lock wrapper helper functions for the various locks, and
 # wrap the sensor calls from the different CPython implementations.
 sensorlock_wrap = wrap_with(sensorlock)
@@ -235,43 +248,21 @@ vibratelock_wrap = wrap_with(vibratelock)
 
 
 # Wrap the `miscinfo` module calls
-# TODO scrub_unicode_from every call that picks up arbitrary strings
-# TODO from the surroundings!
-get_bluetooth_info = sensorlock_wrap(miscinfo.get_bluetooth_info)
-get_bluetooth_scan_info = sensorlock_wrap(miscinfo.get_bluetooth_scan_info)
+get_bluetooth_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_bluetooth_info))
+get_bluetooth_scan_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_bluetooth_scan_info))
 is_wifi_enabled = sensorlock_wrap(miscinfo.is_wifi_enabled)
 get_wifi_state = sensorlock_wrap(miscinfo.get_wifi_state)
-get_wifi_scan_info = sensorlock_wrap(miscinfo.get_wifi_scan_info)
-get_cellular_provider_info = sensorlock_wrap(miscinfo.get_cellular_provider_info)
+get_wifi_connection_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_wifi_connection_info))
+get_wifi_scan_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_wifi_scan_info))
+get_network_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_network_info))
+get_cellular_provider_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_cellular_provider_info))
 get_cell_info = sensorlock_wrap(miscinfo.get_cell_info)
-get_sim_info = sensorlock_wrap(miscinfo.get_sim_info)
+get_sim_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_sim_info))
 get_phone_info = sensorlock_wrap(miscinfo.get_phone_info)
 get_mode_settings = sensorlock_wrap(miscinfo.get_mode_settings)
 get_display_info = sensorlock_wrap(miscinfo.get_display_info)
 get_volume_info = sensorlock_wrap(miscinfo.get_volume_info)
 get_battery_info = sensorlock_wrap(miscinfo.get_battery_info)
-
-
-
-def get_wifi_connection_info():
-  sensorlock.acquire()
-  return_value = miscinfo.get_wifi_connection_info()
-  sensorlock.release()
-  if return_value is not None:
-    return scrub_unicode_from(return_value)
-  else:
-    return None
-
-
-
-def get_network_info():
-  sensorlock.acquire()
-  return_value = miscinfo.get_network_info()
-  sensorlock.release()
-  if return_value is not None:
-    return scrub_unicode_from(return_value)
-  else:
-    return None
 
 
 
