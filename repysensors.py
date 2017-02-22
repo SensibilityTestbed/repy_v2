@@ -272,7 +272,6 @@ get_battery_info = sensorlock_wrap(miscinfo.get_battery_info)
 # timestamp converted to seconds.)
 get_sensor_list = sensorlock_wrap(sensor.get_sensor_list)
 get_acceleration = refine_3d(sensorlock_wrap(sensor.get_acceleration))
-get_ambient_temperature = refine_1d(sensorlock_wrap(sensor.get_ambient_temperature))
 get_game_rotation_vector = refine_4d(sensorlock_wrap(sensor.get_game_rotation_vector))
 get_geomagnetic_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_geomagnetic_rotation_vector))
 get_gravity = refine_3d(sensorlock_wrap(sensor.get_gravity))
@@ -283,8 +282,6 @@ get_linear_acceleration = refine_3d(sensorlock_wrap(sensor.get_linear_accelerati
 get_magnetic_field = refine_3d(sensorlock_wrap(sensor.get_magnetic_field))
 get_magnetic_field_uncalibrated = refine_6d(sensorlock_wrap(sensor.get_magnetic_field_uncalibrated))
 get_pressure = refine_3d(sensorlock_wrap(sensor.get_pressure))
-get_proximity = refine_3d(sensorlock_wrap(sensor.get_proximity))
-get_relative_humidity = refine_1d(sensorlock_wrap(sensor.get_relative_humidity))
 get_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_rotation_vector))
 get_step_counter = refine_1d(sensorlock_wrap(sensor.get_step_counter))
 
@@ -301,6 +298,49 @@ def get_light():
     return illumination
   else:
     return None
+
+
+
+def get_ambient_temperature():
+  # The Android docs don't mention this, but a Samsung S4 here reports
+  # two float values (the first of which we return as the temperature)
+  # and an int, e.g. 23.390657424926758, 27.850000381469727, 3.
+  # We just ignore the other two values, and also the two timestamps that
+  # the sensor event carries.
+  sensorlock.acquire()
+  return_value = sensor.get_ambient_temperature()
+  sensorlock.release()
+  if return_value is not None:
+    return return_value[2]
+  else:
+    return None
+
+
+
+def get_proximity():
+  # Proximity has a different sensor event time base, so `refine`ing
+  # doesn't quite work. Also, on a Samsung S4, it returns three ints
+  # instead of one, e.g. 8, 0, 0.
+  sensorlock.acquire()
+  return_value = sensor.get_proximity()
+  sensorlock.release()
+  if return_value is not None:
+    return return_value[2]
+  else:
+    return None
+
+
+def get_relative_humidity():
+  # Humidity sensor returns "too many" (how many? which exactly?) values
+  # on a Samung S4. We return just one.
+  sensorlock.acquire()
+  return_value = sensor.get_relative_humidity()
+  sensorlock.release()
+  if return_value is not None:
+    return return_value[2]
+  else:
+    return None
+
 
 
 

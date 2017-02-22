@@ -337,8 +337,20 @@ class Int(ValueProcessor):
       raise RepyArgumentError("Min value is %s." % self.min)
 
 
+
+class NoneOrFloat(ValueProcessor):
+  """Allows a NoneType or a float. This doesn't enforce the
+  allow_neg property of Float."""
+
+  def check(self, val):
+    if val is not None:
+      Float().check(val)
+
+
+
+
 class NoneOrInt(ValueProcessor):
-  """Allows a NoneType or an int. This doesn't enforce min limit on the
+  """Allows a NoneType or an int. This doesn't enforce the min limit on the
   ints."""
 
   def check(self, val):
@@ -862,7 +874,7 @@ if IS_ANDROID:
     'get_ambient_temperature': {
 	    'func': repysensors.get_ambient_temperature,
 	    'args': [],
-	    'return': NoneOrListOrDict()},
+	    'return': NoneOrFloat()},
     'get_game_rotation_vector': {
 	    'func': repysensors.get_game_rotation_vector,
 	    'args': [],
@@ -910,11 +922,11 @@ if IS_ANDROID:
     'get_proximity': {
 	    'func': repysensors.get_proximity,
 	    'args': [],
-	    'return': NoneOrListOrDict()},
+	    'return': NoneOrInt()},
     'get_relative_humidity': {
 	    'func': repysensors.get_relative_humidity,
 	    'args': [],
-	    'return': NoneOrListOrDict()},
+	    'return': NoneOrFloat()},
     'get_rotation_vector': {
 	    'func': repysensors.get_rotation_vector,
 	    'args': [],
