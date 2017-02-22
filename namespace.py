@@ -922,7 +922,7 @@ if IS_ANDROID:
     'get_proximity': {
 	    'func': repysensors.get_proximity,
 	    'args': [],
-	    'return': NoneOrInt()},
+	    'return': NoneOrFloat()},
     'get_relative_humidity': {
 	    'func': repysensors.get_relative_humidity,
 	    'args': [],
