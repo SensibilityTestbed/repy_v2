@@ -247,7 +247,9 @@ vibratelock_wrap = wrap_with(vibratelock)
 
 
 
-# Wrap the `miscinfo` module calls
+# Wrap the `miscinfo` module calls.
+# Expect the Bluetooth, WiFi, cellular network, and display information
+# to contain Unicode!
 get_bluetooth_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_bluetooth_info))
 get_bluetooth_scan_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_bluetooth_scan_info))
 is_wifi_enabled = sensorlock_wrap(miscinfo.is_wifi_enabled)
@@ -260,7 +262,7 @@ get_cell_info = sensorlock_wrap(miscinfo.get_cell_info)
 get_sim_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_sim_info))
 get_phone_info = sensorlock_wrap(miscinfo.get_phone_info)
 get_mode_settings = sensorlock_wrap(miscinfo.get_mode_settings)
-get_display_info = sensorlock_wrap(miscinfo.get_display_info)
+get_display_info = unicode_scrub_wrap(sensorlock_wrap(miscinfo.get_display_info))
 get_volume_info = sensorlock_wrap(miscinfo.get_volume_info)
 get_battery_info = sensorlock_wrap(miscinfo.get_battery_info)
 
