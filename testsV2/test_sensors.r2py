@@ -36,10 +36,8 @@ list_of_noargs_sensor_calls = [
     get_lastknown_location,
 ]
 
-# On my Nexus 6 with Android 7.1.1, these sensors currently fail:
-# get_wifi_connection_info, get_network_info, get_cell_info,
-# get_sensor_list, get_lastknown_location
-bad_sensor_indices = [4, 6, 8, 15, 36]
+# Add sensors to skip here:
+bad_sensor_indices = []
 
 for sensor_number in range(len(list_of_noargs_sensor_calls)):
   if sensor_number in bad_sensor_indices:
