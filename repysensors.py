@@ -167,6 +167,27 @@ def refine_6d(sensor_function):
 
 
 
+def pick2_wrap(sensor_function):
+  """Wrapper to return a function that only returns the value with
+  index 2 (the third item) from the return values of a sensor,
+  e.g. `x` for a returned tuple of (s, t, x, a, b).
+
+  This is needed for sensor functions whose intrinsic event timestamps
+  are uninteresting because the sensors change at a rate of <1 Hz,
+  and who return more than one sensor value despite what the Android
+  documentation says. Since there is no canonical interpretation of
+  such extra values, we drop them.
+  """
+  def pick2_wrapped_function():
+    return_value = sensor_function()
+    if return_value is not None:
+      return return_value[2]
+    else:
+      return None
+  return pick2_wrapped_function
+
+
+
 def _scrub_string(source_string):
   """Generate an ASCII representation of a Unicode string. Automatically
   replaces non-ASCII characters with '?'."""
@@ -271,7 +292,7 @@ get_battery_info = sensorlock_wrap(miscinfo.get_battery_info)
 # Wrap the `sensor` module calls
 # (Some calls get a second wrapping because their return values need to be
 # "refined", i.e. the epoch timestamp dropped and the sensor event
-# timestamp converted to seconds.)
+# timestamp converted to seconds, or superfluous values removed.)
 get_sensor_list = sensorlock_wrap(sensor.get_sensor_list)
 get_acceleration = refine_3d(sensorlock_wrap(sensor.get_acceleration))
 get_game_rotation_vector = refine_4d(sensorlock_wrap(sensor.get_game_rotation_vector))
@@ -287,63 +308,24 @@ get_pressure = refine_3d(sensorlock_wrap(sensor.get_pressure))
 get_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_rotation_vector))
 get_step_counter = refine_1d(sensorlock_wrap(sensor.get_step_counter))
 
+# A Samsung S4 here reports two float values and an int.
+# We report the first number as the temperature, and drop the other two.
+# Example reading: 23.390657424926758, 27.850000381469727, 3.
+get_ambient_temperature = pick2_wrap(sensorlock_wrap(sensor.get_ambient_temperature))
 
+# My Nexus 6's light sensor has three "axes", only the first of which
+# is documented
+get_light = pick2_wrap(sensorlock_wrap(sensor.get_light))
 
-def get_light():
-  # The docs don't mention this, but my Nexus 6's light sensor has
-  # three axes, the latter two of which 0....
-  sensorlock.acquire()
-  return_value = sensor.get_light()
-  sensorlock.release()
-  if return_value is not None:
-    _, _, illumination, _, _ = return_value
-    return illumination
-  else:
-    return None
+# Proximity has a different sensor event time base than other sensors,
+# and it's low-rate, so we don't report a timestamp.
+# Also, on a Samsung S4, it returns three ints, only one documented,
+# e.g. 8, 0, 0.
+get_proximity = pick2_wrap(sensorlock_wrap(sensor.get_proximity))
 
-
-
-def get_ambient_temperature():
-  # The Android docs don't mention this, but a Samsung S4 here reports
-  # two float values (the first of which we return as the temperature)
-  # and an int, e.g. 23.390657424926758, 27.850000381469727, 3.
-  # We just ignore the other two values, and also the two timestamps that
-  # the sensor event carries.
-  sensorlock.acquire()
-  return_value = sensor.get_ambient_temperature()
-  sensorlock.release()
-  if return_value is not None:
-    return return_value[2]
-  else:
-    return None
-
-
-
-def get_proximity():
-  # Proximity has a different sensor event time base, so `refine`ing
-  # doesn't quite work. Also, on a Samsung S4, it returns three ints
-  # instead of one, e.g. 8, 0, 0.
-  sensorlock.acquire()
-  return_value = sensor.get_proximity()
-  sensorlock.release()
-  if return_value is not None:
-    return return_value[2]
-  else:
-    return None
-
-
-def get_relative_humidity():
-  # Humidity sensor returns "too many" (how many? which exactly?) values
-  # on a Samung S4. We return just one.
-  sensorlock.acquire()
-  return_value = sensor.get_relative_humidity()
-  sensorlock.release()
-  if return_value is not None:
-    return return_value[2]
-  else:
-    return None
-
-
+# Humidity sensor returns "too many" (how many? which exactly?) values
+# on a Samung S4. We return just one.
+get_relative_humidity = pick2_wrap(sensorlock_wrap(sensor.get_relative_humidity))
 
 
 # Wrap the `media` module calls
