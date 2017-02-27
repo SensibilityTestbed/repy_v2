@@ -300,13 +300,13 @@ get_geomagnetic_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_geomagnet
 get_gravity = refine_3d(sensorlock_wrap(sensor.get_gravity))
 get_gyroscope = refine_3d(sensorlock_wrap(sensor.get_gyroscope))
 get_gyroscope_uncalibrated = refine_6d(sensorlock_wrap(sensor.get_gyroscope_uncalibrated))
-get_heart_rate = refine_1d(sensorlock_wrap(sensor.get_heart_rate))
+get_heart_rate = pick2_wrap(sensorlock_wrap(sensor.get_heart_rate))
 get_linear_acceleration = refine_3d(sensorlock_wrap(sensor.get_linear_acceleration))
 get_magnetic_field = refine_3d(sensorlock_wrap(sensor.get_magnetic_field))
 get_magnetic_field_uncalibrated = refine_6d(sensorlock_wrap(sensor.get_magnetic_field_uncalibrated))
 get_pressure = refine_3d(sensorlock_wrap(sensor.get_pressure))
 get_rotation_vector = refine_5d(sensorlock_wrap(sensor.get_rotation_vector))
-get_step_counter = refine_1d(sensorlock_wrap(sensor.get_step_counter))
+get_step_counter = pick2_wrap(sensorlock_wrap(sensor.get_step_counter))
 
 # A Samsung S4 here reports two float values and an int.
 # We report the first number as the temperature, and drop the other two.

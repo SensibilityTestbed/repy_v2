@@ -898,7 +898,7 @@ if IS_ANDROID:
     'get_heart_rate': {
 	    'func': repysensors.get_heart_rate,
 	    'args': [],
-	    'return': NoneOrListOrDict()},
+	    'return': NoneOrFloat()},
     'get_light': {
 	    'func': repysensors.get_light,
 	    'args': [],
@@ -934,7 +934,7 @@ if IS_ANDROID:
     'get_step_counter': {
 	    'func': repysensors.get_step_counter,
 	    'args': [],
-	    'return': NoneOrListOrDict()},
+	    'return': NoneOrFloat()},
   }
 
   SNAKEI_MEDIA_WRAPPER_INFO = {
