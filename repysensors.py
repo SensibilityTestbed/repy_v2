@@ -67,10 +67,10 @@ def wrap_with(lock):
   its argument. Use this like so:
     wrap_with_foo_lock = wrap_with(foo_lock)  # This is what we return
     # Wrap something with the returned wrapper function:
-    wrapped_function_call1 = wrap_with_foo_lock(a_function_call)
+    wrapped_function_call1 = wrap_with_foo_lock(function_call)
     wrapped_function_call2 = wrap_with_foo_lock(another_function_call)
     wrapped_funtion_call1(args) # This call will acquire foo_lock now
-                                # before doing the actual a_function_call1.
+                                # before doing the actual function_call.
   """
   def lock_this(function):
     def call_into_function():
@@ -190,7 +190,7 @@ def pick2_wrap(sensor_function):
 
 def _scrub_string(source_string):
   """Generate an ASCII representation of a Unicode string. Automatically
-  replaces non-ASCII characters with '?'."""
+  replaces non-ASCII characters with '?'s."""
   return source_string.encode("ascii", "replace")
 
 
@@ -247,7 +247,7 @@ def scrub_unicode_from(value):
 
 
 def unicode_scrub_wrap(sensor_function):
-  """Returned a function that calls into `sensor_function` and removes
+  """Returns a function that calls into `sensor_function` and removes
   ("scrubs") Unicode from its return values."""
   def scrubbed_function():
     return_value = sensor_function()
