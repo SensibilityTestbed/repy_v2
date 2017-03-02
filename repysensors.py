@@ -286,6 +286,7 @@ def unicode_scrub_wrap(sensor_function):
 # Create lock wrapper helper functions for the various locks, and
 # wrap the sensor calls from the different CPython implementations.
 sensorlock_wrap = wrap_with(sensorlock)
+args_taking_sensorlock_wrap = args_taking_wrap_with(sensorlock)
 medialock_wrap = args_taking_wrap_with(medialock)
 outputlock_wrap = args_taking_wrap_with(outputlock)
 
@@ -366,9 +367,10 @@ is_tts_speaking = sensorlock_wrap(media.is_tts_speaking)
 tts_speak = medialock_wrap(media.tts_speak)
 
 # Wrap the `location` module calls
+# `get_geolocation` takes arguments, so it needs an arg-taking lock.
 get_location = sensorlock_wrap(location.get_location)
 get_lastknown_location = sensorlock_wrap(location.get_lastknown_location)
-get_geolocation = sensorlock_wrap(location.get_geolocation)
+get_geolocation = args_taking_sensorlock_wrap(location.get_geolocation)
 
 
 # Wrap the `androidlog` module calls
