@@ -65,17 +65,41 @@ def wrap_with(lock):
   """
   Return a helper function that puts the given `lock` around calls of
   its argument. Use this like so:
-    wrap_with_foo_lock = wrap_with(foo_lock)  # This is what we return
+    # This is what we return
+    wrap_with_foo_lock = wrap_with(foo_lock)
     # Wrap something with the returned wrapper function:
     wrapped_function_call1 = wrap_with_foo_lock(function_call)
     wrapped_function_call2 = wrap_with_foo_lock(another_function_call)
-    wrapped_funtion_call1(args) # This call will acquire foo_lock now
-                                # before doing the actual function_call.
+    # This call will acquire foo_lock now before doing the actual function_call
+    wrapped_function_call1()
   """
   def lock_this(function):
     def call_into_function():
       lock.acquire()
       return_value = function()
+      lock.release()
+      return return_value
+    return call_into_function
+  return lock_this
+
+
+
+def args_taking_wrap_with(lock):
+  """
+  Wrap a function to use the supplied `lock` as per `wrap_with` above,
+   but this time, the wrapped inner function takes arguments.
+
+  Example:
+    # The next two lines are identical to `wrap_with`'s usage
+    wrap_with_bar_lock = args_taking_wrap_with(bar_lock)
+    wrapped_args_taking_fn_call = wrap_with_bar_lock(args_taking_fn_call)
+    # Here, the wrapped function takes arguments!
+    wrapped_args_taking_fn_call(args)
+  """
+  def lock_this(function):
+    def call_into_function(*args):
+      lock.acquire()
+      return_value = function(*args)
       lock.release()
       return return_value
     return call_into_function
@@ -262,9 +286,8 @@ def unicode_scrub_wrap(sensor_function):
 # Create lock wrapper helper functions for the various locks, and
 # wrap the sensor calls from the different CPython implementations.
 sensorlock_wrap = wrap_with(sensorlock)
-medialock_wrap = wrap_with(medialock)
-outputlock_wrap = wrap_with(outputlock)
-vibratelock_wrap = wrap_with(vibratelock)
+medialock_wrap = args_taking_wrap_with(medialock)
+outputlock_wrap = args_taking_wrap_with(outputlock)
 
 
 
@@ -329,12 +352,17 @@ get_relative_humidity = pick2_wrap(sensorlock_wrap(sensor.get_relative_humidity)
 
 
 # Wrap the `media` module calls
-# XXX Locking here means we can't tts_speak while microphone_record'ing.
-# XXX microphone_record allows recording into arbitrarily-named files!
-# XXX microphone_record's record length is quasi-unlimited!
-microphone_record = medialock_wrap(media.microphone_record)
-is_media_playing = medialock_wrap(media.is_media_playing)
-is_tts_speaking = medialock_wrap(media.is_tts_speaking)
+# I'll wrap the quickly-returning,  argument-free calls in `sensorlock`,
+# and use a separate `medialock` for the other.
+#
+# NOTE: I choose to not expose `media.microphone_record`.
+# If it was exposed, consider the following issues:
+# * medialock locking means we can't tts_speak while microphone_record'ing.
+# * microphone_record allows recording into arbitrarily-named files!
+# * microphone_record's record length is quasi-unlimited!
+#microphone_record = medialock_wrap(media.microphone_record)
+is_media_playing = sensorlock_wrap(media.is_media_playing)
+is_tts_speaking = sensorlock_wrap(media.is_tts_speaking)
 tts_speak = medialock_wrap(media.tts_speak)
 
 # Wrap the `location` module calls

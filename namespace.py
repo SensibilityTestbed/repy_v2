@@ -938,10 +938,10 @@ if IS_ANDROID:
   }
 
   SNAKEI_MEDIA_WRAPPER_INFO = {
-    'microphone_record': {
-	    'func': repysensors.microphone_record,
-	    'args': [Str(maxlen=120), Int(min=0)],
-	    'return': None},
+    #'microphone_record': {
+    #    'func': repysensors.microphone_record,
+    #    'args': [Str(maxlen=120), Int(min=0)],
+    #    'return': None},
     'is_media_playing': {
 	    'func': repysensors.is_media_playing,
 	    'args': [],
