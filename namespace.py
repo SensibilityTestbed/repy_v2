@@ -864,77 +864,77 @@ if IS_ANDROID:
 
   SNAKEI_SENSOR_WRAPPER_INFO = {
     'get_sensor_list': {
-	    'func': repysensors.get_sensor_list,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_sensor_list,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_acceleration': {
-	    'func': repysensors.get_acceleration,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_acceleration,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_ambient_temperature': {
-	    'func': repysensors.get_ambient_temperature,
-	    'args': [],
-	    'return': NoneOrFloat()},
+            'func': repysensors.get_ambient_temperature,
+            'args': [],
+            'return': NoneOrFloat()},
     'get_game_rotation_vector': {
-	    'func': repysensors.get_game_rotation_vector,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_game_rotation_vector,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_geomagnetic_rotation_vector': {
-	    'func': repysensors.get_geomagnetic_rotation_vector,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_geomagnetic_rotation_vector,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_gravity': {
-	    'func': repysensors.get_gravity,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_gravity,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_gyroscope': {
-	    'func': repysensors.get_gyroscope,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_gyroscope,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_gyroscope_uncalibrated': {
-	    'func': repysensors.get_gyroscope_uncalibrated,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_gyroscope_uncalibrated,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_heart_rate': {
-	    'func': repysensors.get_heart_rate,
-	    'args': [],
-	    'return': NoneOrFloat()},
+            'func': repysensors.get_heart_rate,
+            'args': [],
+            'return': NoneOrFloat()},
     'get_light': {
-	    'func': repysensors.get_light,
-	    'args': [],
-	    'return': NoneOrInt()},
+            'func': repysensors.get_light,
+            'args': [],
+            'return': NoneOrInt()},
     'get_linear_acceleration': {
-	    'func': repysensors.get_linear_acceleration,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_linear_acceleration,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_magnetic_field': {
-	    'func': repysensors.get_magnetic_field,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_magnetic_field,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_magnetic_field_uncalibrated': {
-	    'func': repysensors.get_magnetic_field_uncalibrated,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_magnetic_field_uncalibrated,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_pressure': {
-	    'func': repysensors.get_pressure,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_pressure,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_proximity': {
-	    'func': repysensors.get_proximity,
-	    'args': [],
-	    'return': NoneOrFloat()},
+            'func': repysensors.get_proximity,
+            'args': [],
+            'return': NoneOrFloat()},
     'get_relative_humidity': {
-	    'func': repysensors.get_relative_humidity,
-	    'args': [],
-	    'return': NoneOrFloat()},
+            'func': repysensors.get_relative_humidity,
+            'args': [],
+            'return': NoneOrFloat()},
     'get_rotation_vector': {
-	    'func': repysensors.get_rotation_vector,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_rotation_vector,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_step_counter': {
-	    'func': repysensors.get_step_counter,
-	    'args': [],
-	    'return': NoneOrFloat()},
+            'func': repysensors.get_step_counter,
+            'args': [],
+            'return': NoneOrFloat()},
   }
 
   SNAKEI_MEDIA_WRAPPER_INFO = {
@@ -943,32 +943,32 @@ if IS_ANDROID:
     #    'args': [Str(maxlen=120), Int(min=0)],
     #    'return': None},
     'is_media_playing': {
-	    'func': repysensors.is_media_playing,
-	    'args': [],
-	    'return': Bool()},
+            'func': repysensors.is_media_playing,
+            'args': [],
+            'return': Bool()},
     'is_tts_speaking': {
-	    'func': repysensors.is_tts_speaking,
-	    'args': [],
-	    'return': Bool()},
+            'func': repysensors.is_tts_speaking,
+            'args': [],
+            'return': Bool()},
     'tts_speak': {
-	    'func': repysensors.tts_speak,
-	    'args': [Str(maxlen=1024)],
-	    'return': None}
+            'func': repysensors.tts_speak,
+            'args': [Str(maxlen=1024)],
+            'return': None}
   }
 
   SNAKEI_LOCATION_WRAPPER_INFO = {
     'get_location': {
-	    'func': repysensors.get_location,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_location,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_lastknown_location': {
-	    'func': repysensors.get_lastknown_location,
-	    'args': [],
-	    'return': NoneOrListOrDict()},
+            'func': repysensors.get_lastknown_location,
+            'args': [],
+            'return': NoneOrListOrDict()},
     'get_geolocation': {
-	    'func': repysensors.get_geolocation,
-	    'args': [Float(True), Float(True), Int()],
-	    'return': NoneOrListOrDict()}
+            'func': repysensors.get_geolocation,
+            'args': [Float(True), Float(True), Int()],
+            'return': NoneOrListOrDict()}
   }
 
   SNAKEI_OUTPUTS_WRAPPER_INFO = {
