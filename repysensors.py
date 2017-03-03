@@ -368,9 +368,9 @@ tts_speak = medialock_wrap(media.tts_speak)
 
 # Wrap the `location` module calls
 # `get_geolocation` takes arguments, so it needs an arg-taking lock.
-get_location = sensorlock_wrap(location.get_location)
-get_lastknown_location = sensorlock_wrap(location.get_lastknown_location)
-get_geolocation = args_taking_sensorlock_wrap(location.get_geolocation)
+get_location = unicode_scrub_wrap(sensorlock_wrap(location.get_location))
+get_lastknown_location = unicode_scrub_wrap(sensorlock_wrap(location.get_lastknown_location))
+get_geolocation = unicode_scrub_wrap(args_taking_sensorlock_wrap(location.get_geolocation))
 
 
 # Wrap the `androidlog` module calls
