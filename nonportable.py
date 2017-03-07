@@ -827,15 +827,28 @@ def do_forked_resource_monitor_android():
     # XXX LP: Why 98? Not defined in harshexit or elsewhere...
     monitor_exit_code = 98
 
+  except IOError, e:
+    # We expect the error to look like this,
+    # " IOError: [Errno 2] No such file or directory: '/proc/20129/stat' ".
+    # Then, `resouce_monitor` could not access the monitored process's
+    # procfs entry. The entry disappears when the monitored process
+    # ends by itself or is stopped by the nodemanager. (Anyhow, there is
+    # no more process to kill.)
+    # Raise if we see another error number, though!
+    if e.errno != 2:
+      raise e
+
   except Exception, exp:
     try:
       os.kill(repypid, 0)
-    except OSError, err:
-      # This means that there is no more repy process to kill
-      pass
+    except OSError, e:
+      # We expect an `OSError: [Errno 3] No such process`.
+      # There is no more process to kill, so implicitly `pass`.
+      if e.errno != 3:
+        raise e
     else:
       kill_repy = True
-      error_msg = str(exp) + " Monitor death! Impolitely killing repy process!"
+      error_msg = repr(exp) + " Monitor death! Impolitely killing repy process!"
       monitor_exit_code = 98
 
   finally:
