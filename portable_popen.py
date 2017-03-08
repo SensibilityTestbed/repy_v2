@@ -30,9 +30,13 @@ def Popen(args):
     # if len(args) >= 2 and ("python" in args[0] or not args[0]):
 
     # We must sanitize the arguments to our JNI popen, see
-    # SensibilityTestbed/repy_v2#15:
+    # aaaaalbert/sensibility-testbed#31:
     #
-    # Sanitize 1, There must not be too many arguments, so as to not
+    # Sanitize 1, make sure our call argument is a list.
+    if type(args) is not list:
+      raise TypeError("You must supply a list argument")
+
+    # Sanitize 2, There must not be too many arguments, so as to not
     #    overflow the JNI's 512 local reference table slots. I'll fix
     #    the allowed maximum at an arbitrary 100 for now. This should
     #    more than suffice for our sandbox-calling purposes.
@@ -42,7 +46,7 @@ def Popen(args):
       raise OSError("Invalid argument. portable_popen's argument list " +
           "is restricted to " + str(POPEN_MAX_ARGS) + " entries.")
 
-    # Sanitize 2, Only string args are allowed.
+    # Sanitize 3, Only string arguments are allowed inside the args list.
     for arg in args:
       if type(arg) is not str:
         # Do as `subprocess.Popen([123])` does
