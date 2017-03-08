@@ -3,12 +3,42 @@ Description:
   This file provides a Python interface to low-level system calls
   on Android. It is based on linux_api.py and nix_common_api.py.
 """
+import os
 import subprocess
 
 import linux_api
+_plain_process_stat_file = linux_api._process_stat_file
+
+def _process_stat_file(filename):
+  """Work around aaaaalbert/sensibility-testbed#30, monitoring process
+  can't access the monitored process's procfs entry"""
+  # We can access our own CPU time stats just fine
+  if filename == "/proc/" + str(os.getpid()) + "/stat":
+    return _plain_process_stat_file(filename)
+
+  # However, for PIDs other than our own, we rely on nonportable's
+  # `do_forked_resource_monitor_android` to pass us a handle to the
+  # monitored process's procfs stat entry.
+  # Read and process the information ourselves.
+  # (This is just copied from linux_api's implementation.)
+  global monitored_process_procfs_stat_file
+  data = monitored_process_procfs_stat_file.read()
+  monitored_process_procfs_stat_file.seek(0)
+  data = data.strip("\n")
+  # Remove the substring that says "(python)", since it changes the field alignment
+  start_index = data.find("(")
+  if start_index != -1:
+    end_index = data.find(")", start_index)
+    data = data[:start_index-1] + data[end_index+1:]
+
+  # Break the data into an array by spaces
+  return data.split(" ")
+
+linux_api._process_stat_file = _process_stat_file
 
 import textops      # Import seattlelib's text processing lib
 
+monitored_process_procfs_stat_file = None
 
 # Reuse most of the Linux API's functionality
 get_process_cpu_time = linux_api.get_process_cpu_time

@@ -704,7 +704,7 @@ class monitor_process_checker(threading.Thread):
 
     # Write out status information, the monitor process would do this, but its dead.
     statusstorage.write_status("Terminated")  
-    print >> sys.stderr, "Monitor process died! Terminating!"
+    print >> sys.stderr, "Monitor process died! Terminating!", repr(e)
     harshexit.harshexit(70)
 
 
@@ -796,6 +796,9 @@ def do_forked_resource_monitor_android():
 
   repypid = os.getpid()
   (readhandle, writehandle) = os.pipe()
+
+  os_api.monitored_process_procfs_stat_file = open("/proc/" +
+      str(repypid) + "/stat")
 
   if os.fork():
     # Parent does not need to write to the pipe
@@ -929,6 +932,7 @@ def resource_monitor(repypid, pipe_handle):
     # Calculate stop time
     stoptime = nanny.calculate_cpu_sleep_interval(nanny.get_resource_limit("cpu"), percentused, elapsedtime)
     
+
     # If we are supposed to stop repy, then suspend, sleep and resume
     if stoptime > 0.0:
       # They must be punished by stopping
